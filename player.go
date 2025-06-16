@@ -101,7 +101,6 @@ func menuAwal(filePlayer *tabPlayer) *player {
 			reader.ReadString('\n')
 
 			for !validName {
-				//clearScreen()
 				var nameStatus bool = false
 
 				for !nameStatus {
@@ -111,6 +110,7 @@ func menuAwal(filePlayer *tabPlayer) *player {
 
 					if nameInput != "" && nameInput != " " {
 						nameStatus = true
+						fmt.Println()
 					} else {
 						fmt.Println(topBottomBorder)
 						fmt.Println(formatCenteredLine("Nama tidak boleh kosong"))
@@ -121,8 +121,9 @@ func menuAwal(filePlayer *tabPlayer) *player {
 				index := findPlayer(nameInput, *filePlayer)
 				if index != -1 {
 					fmt.Println(topBottomBorder)
-					fmt.Println(formatCenteredLine(fmt.Sprintf("Nama '%s' sudah ada. Main lagi? (y/n):", nameInput)))
+					fmt.Println(formatCenteredLine(fmt.Sprintf("Nama '%s' sudah ada. Lanjut timpa? (y/n):", nameInput)))
 					fmt.Println(topBottomBorder)
+					fmt.Print("Pilih: ")
 					confirm, _ := reader.ReadString('\n')
 					confirm = strings.TrimSpace(strings.ToLower(confirm))
 
@@ -133,10 +134,15 @@ func menuAwal(filePlayer *tabPlayer) *player {
 						// Lanjut ke permainan dengan overwrite data lama
 						(*filePlayer)[index] = player{name: nameInput, difficulty: -1}
 						validName = true
-					} else {
+					} else if confirm == "n" {
 						fmt.Println(topBottomBorder)
 						fmt.Println(formatCenteredLine("Silakan masukkan nama lain."))
 						fmt.Println(topBottomBorder)
+					} else {
+						fmt.Println(topBottomBorder)
+						fmt.Println(formatCenteredLine("Pilihan tidak valid, Default ke pilihan 'n'"))
+						fmt.Println(topBottomBorder)
+						confirm = "n"
 					}
 				} else {
 					fmt.Println(topBottomBorder)
@@ -152,11 +158,11 @@ func menuAwal(filePlayer *tabPlayer) *player {
 			fmt.Println(topBottomBorder)
 			fmt.Print("Pilih (1/2): ")
 			fmt.Scan(&diff)
+			fmt.Println()
 
 			if diff != 1 && diff != 2 {
 				fmt.Println(topBottomBorder)
-				fmt.Println(formatCenteredLine("Pilihan tidak valid. Default ke Easy."))
-				fmt.Println(topBottomBorder)
+				fmt.Println(formatCenteredLine("Pilihan tidak valid, Default ke Easy. Selamat Bermain!"))
 				diff = 1
 			}
 
@@ -184,16 +190,17 @@ func menuAwal(filePlayer *tabPlayer) *player {
 				fmt.Println(topBottomBorder)
 				fmt.Println(formatCenteredLine("LEADERBOARD MENU"))
 				fmt.Println(formatCenteredLine("")) // Space
-				fmt.Println(formatCenteredLine("1. Tampilkan Leaderboard (original)"))
-				fmt.Println(formatCenteredLine("2. Urutkan berdasarkan Nama (ascending)"))
-				fmt.Println(formatCenteredLine("3. Urutkan berdasarkan Turns (decending)"))
-				fmt.Println(formatCenteredLine("0. Kembali ke menu utama"))
+				fmt.Println("|   1. Tampilkan Leaderboard (original)                                                               |")
+				fmt.Println("|   2. Urutkan berdasarkan Nama (ascending)                                                           |")
+				fmt.Println("|   3. Urutkan berdasarkan Turns (decending)                                                          |")
+				fmt.Println("|   0. Kembali ke menu utama                                                                          |")
 				fmt.Println(formatCenteredLine("")) // Space
 				fmt.Println(topBottomBorder)
 
 				var sortChoice string
 				fmt.Print("Pilih (1/2/3/0): ")
 				fmt.Scan(&sortChoice)
+				fmt.Println()
 
 				if sortChoice == "1" {
 					printLeaderboard(*filePlayer)
@@ -211,12 +218,16 @@ func menuAwal(filePlayer *tabPlayer) *player {
 
 					for !exitSubMenu {
 						fmt.Println(topBottomBorder)
-						fmt.Println(formatCenteredLine("1. Cari Player berdasarkan Nama"))
-						fmt.Println(formatCenteredLine("2. Hapus Player berdasarkan Nama"))
-						fmt.Println(formatCenteredLine("0. Kembali ke menu Leaderboard"))
+						fmt.Println(formatCenteredLine("LEADERBOARD MENU"))
+						fmt.Println(formatCenteredLine(""))
+						fmt.Println("|   1. Cari Player berdasarkan Nama                                                                   |")
+						fmt.Println("|   2. Hapus Player berdasarkan Nama                                                                  |")
+						fmt.Println("|   0. Kembali ke menu Leaderboard                                                                    |")
+						fmt.Println(formatCenteredLine(""))
 						fmt.Println(topBottomBorder)
 						fmt.Print("Pilih (1/2/0): ")
 						fmt.Scan(&subChoice)
+						fmt.Println()
 
 						switch subChoice {
 						case "1":
@@ -245,7 +256,6 @@ func menuAwal(filePlayer *tabPlayer) *player {
 								row := fmt.Sprintf(" %-10s | %-30s | %-10d | %-10s ", fmt.Sprintf("%08b", p.id), p.name, p.numOfTurns, diffStr)
 								fmt.Printf("|%s|\n", row)
 								fmt.Println(topBottomBorder)
-								fmt.Println(topBottomBorder)
 							} else {
 								fmt.Println(topBottomBorder)
 								fmt.Println(formatCenteredLine("Player dengan nama tersebut tidak ditemukan."))
@@ -259,9 +269,13 @@ func menuAwal(filePlayer *tabPlayer) *player {
 							idx := findPlayerByNameBinary(nameInput, *filePlayer)
 							if idx != -1 {
 								deletePlayer(idx, filePlayer)
-								fmt.Println("Player berhasil dihapus.")
+								fmt.Println(topBottomBorder)
+								fmt.Println(formatCenteredLine("Player berhasil dihapus."))
+								fmt.Println(topBottomBorder)
 							} else {
-								fmt.Println("Player dengan nama tersebut tidak ditemukan.")
+								fmt.Println(topBottomBorder)
+								fmt.Println(formatCenteredLine("Player dengan nama tersebut tidak ditemukan."))
+								fmt.Println(topBottomBorder)
 							}
 							// update temp supaya sama dengan data terbaru
 							temp = copyPlayerList(*filePlayer)
@@ -275,12 +289,16 @@ func menuAwal(filePlayer *tabPlayer) *player {
 							exitSubMenu = true
 						default:
 							fmt.Println("Pilihan tidak valid.")
+							fmt.Println()
 						}
 					}
 				} else if sortChoice == "0" {
 					exitLeaderboard = true
+					fmt.Println("Kembali ke Menu Awal...")
+					entryBanner()
 				} else {
 					fmt.Println("Pilihan tidak valid.")
+					fmt.Println()
 				}
 			}
 		case "3":
@@ -294,20 +312,31 @@ func menuAwal(filePlayer *tabPlayer) *player {
 					fmt.Println(topBottomBorder)
 					fmt.Println(formatCenteredLine(scoreMessage))
 					fmt.Println(topBottomBorder)
+					fmt.Println("Kembali ke Menu Awal...")
+					entryBanner()
 				} else {
 					scoreMessage := fmt.Sprintf("Nama: %s | Turns: %d | Difficulty: Hard", p.name, p.numOfTurns)
 					fmt.Println(topBottomBorder)
 					fmt.Println(formatCenteredLine(scoreMessage))
 					fmt.Println(topBottomBorder)
+					fmt.Println("Kembali ke Menu Awal...")
+					entryBanner()
 				}
 			} else {
-				fmt.Println("Nama tidak ditemukan.")
+				fmt.Println(topBottomBorder)
+				fmt.Println(formatCenteredLine("Nama tidak ditemukan."))
+				fmt.Println(topBottomBorder)
+				fmt.Println("Kembali ke Menu Awal...")
+				entryBanner()
 			}
 
 		case "0":
 			finished = true
+
 		default:
-			fmt.Println("Pilihan tidak valid.")
+			fmt.Println("Pilihan tidak valid. Silahkan pilih Pilihan sesuai instruksi.")
+			fmt.Println()
+			entryBanner()
 		}
 	}
 
